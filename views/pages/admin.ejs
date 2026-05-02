@@ -26,13 +26,18 @@
     <a href="/">← Back to Live Site</a>
   </div>
 
+<% 
+    const ecommerceOrders = orders.filter(o => o.items && o.items.length > 0);
+    const customCakeOrders = orders.filter(o => o.occasion && o.occasion.length > 0);
+%>
+
   <div class="container">
     <div class="card">
         <h3>Live Orders Overview</h3>
         <p style="color:var(--text-muted)">All custom E-Commerce orders are fetched from the secure Database.</p>
         
-        <% if(orders.length === 0) { %>
-            <div style="padding: 40px; text-align:center; color:var(--text-muted)">No orders received yet!</div>
+        <% if(ecommerceOrders.length === 0) { %>
+            <div style="padding: 40px; text-align:center; color:var(--text-muted)">No e-commerce orders received yet!</div>
         <% } else { %>
             <table>
                 <thead>
@@ -46,7 +51,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% orders.forEach(o => { %>
+                    <% ecommerceOrders.forEach(o => { %>
                         <tr>
                             <td>#DA-<%= o.id %></td>
                             <td><strong><%= o.name %></strong><br><span style="font-size:0.85rem;color:gray"><%= o.phone %></span></td>
@@ -73,25 +78,39 @@
         <h3>Custom Cake Requests & Inquiries</h3>
         <p style="color:var(--text-muted)">These are requests submitted through the Custom Cake Order form and general contact page.</p>
         
-        <% if(typeof messages !== 'undefined' && messages.length > 0) { %>
+        <% if((messages && messages.length > 0) || customCakeOrders.length > 0) { %>
             <table>
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Type</th>
                         <th>Name</th>
                         <th>Contact</th>
                         <th>Message / Details</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% messages.forEach(m => { %>
+                    <% customCakeOrders.forEach(o => { %>
                         <tr>
-                            <td style="font-size:0.85rem;color:gray"><%= new Date(m.createdAt).toLocaleDateString() %></td>
+                            <td style="font-size:0.85rem;color:gray"><%= new Date(o.createdAt || o.created_at || Date.now()).toLocaleDateString() %></td>
+                            <td><span style="background:var(--sage-pale); color:var(--sage); padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Custom Cake</span></td>
+                            <td><strong><%= o.name %></strong></td>
+                            <td style="font-size:0.85rem;"><%= o.phone %></td>
+                            <td style="max-width:350px; font-size:0.9rem; white-space: pre-wrap;"><strong>Occasion:</strong> <%= o.occasion %><br><strong>Flavour:</strong> <%= o.flavour %><br><strong>Weight:</strong> <%= o.weight %><br><strong>Delivery:</strong> <%= o.delivery_date %> at <%= o.delivery_time %><br><strong>Instructions:</strong> <%= o.message %><% if(o.image_url) { %><br><a href="<%= o.image_url %>" target="_blank" style="color:var(--sage); text-decoration:underline;">View Reference Image</a><% } %></td>
+                            <td><span class="status <%= o.status %>"><%= o.status %></span></td>
+                        </tr>
+                    <% }) %>
+                    <% if (messages) { messages.forEach(m => { %>
+                        <tr>
+                            <td style="font-size:0.85rem;color:gray"><%= new Date(m.createdAt || m.created_at || Date.now()).toLocaleDateString() %></td>
+                            <td><span style="background:#eef2f5; color:#5c6b73; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Contact Inquiry</span></td>
                             <td><strong><%= m.name %></strong></td>
                             <td style="font-size:0.85rem;"><%= m.phone %><br><%= m.email !== 'N/A' ? m.email : '' %></td>
                             <td style="max-width:350px; font-size:0.9rem; white-space: pre-wrap;"><%= m.body %></td>
+                            <td>-</td>
                         </tr>
-                    <% }) %>
+                    <% }) } %>
                 </tbody>
             </table>
         <% } else { %>
