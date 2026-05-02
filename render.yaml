@@ -3,10 +3,11 @@ services:
       name: destinate-cake-cafe
           env: node
               plan: free
-                  buildCommand: rm -rf node_modules package-lock.json && npm install
+                  buildCommand: rm -rf node_modules package-lock.json && npm install --build-from-source
                       startCommand: node server.js
                           envVars:
                                 - key: NODE_ENV
                                         value: production
                                               - key: PORT
                                                       value: 10000
+                                                      
