@@ -1,0 +1,464 @@
+<%- include('../partials/header') %>
+
+
+<!-- ============================================================
+     HERO SECTION
+     HOW TO EDIT:
+     - Change the tagline: "Coimbatore's Finest Cake Cafe"
+     - Change the main title
+     - Change hero description paragraph
+     - Change button text
+     - Change the featured cake card (emoji, name, price, badge)
+============================================================ -->
+<section id="home">
+  <div class="hero-text">
+    <div class="hero-tag">Delicious Home-made Cakes for Every Occasion</div>  <!-- CHANGE TAGLINE -->
+    <h1 class="hero-title">Every Bite is a <em>Destination</em></h1>  <!-- CHANGE TITLE -->
+    <p class="hero-desc">
+      Handcrafted cakes, artisan pastries, and specialty coffees — made with love in every layer.
+      Where flavour meets artistry, and every visit feels like coming home.
+    </p>  <!-- CHANGE DESCRIPTION -->
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="smoothScroll('#custom-cakes')">Order Custom Cake</button>
+      <button class="btn-outline" onclick="window.open('https://wa.me/919384784409?text=Hi! I would like to order a cake.', '_blank')">Chat on WhatsApp</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div style="width: 100%; max-width: 380px; aspect-ratio: 1 / 1; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; background: white; animation: float 6s ease-in-out infinite; box-shadow: 0 20px 50px rgba(74,124,89,0.15);">
+      <img src="/images/new_logo.png" alt="Destin-ate Logo" style="width: 105%; height: 105%; object-fit: cover;">
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     STATS BAR
+     HOW TO EDIT: Change numbers and labels below
+============================================================ -->
+<div class="stats-bar">
+  <div><span class="stat-num">50+</span><div class="stat-label">Varieties</div></div>
+  <div><span class="stat-num">100+</span><div class="stat-label">Happy Customers</div></div>
+  <div><span class="stat-num">2</span><div class="stat-label">Years Experience</div></div>
+  <div><span class="stat-num">100%</span><div class="stat-label">Fresh Daily</div></div>
+</div>
+
+<!-- ============================================================
+     MENU SECTION
+     HOW TO EDIT:
+     - Scroll down to the JavaScript section
+     - Find: const menuData = { ... }
+     - Add/remove/edit items in each category array
+     - Each item has: e (emoji), n (name), d (description), p (price), c (category label)
+============================================================ -->
+<section id="menu">
+  <div class="menu-header">
+    <div>
+      <div class="section-tag">Our Menu</div>
+      <h2 class="section-title">Crafted with <em style="font-family:'Playfair Display',serif;font-style:italic;color:var(--sage)">Passion</em></h2>
+      <p class="section-sub">Each item baked fresh daily using premium ingredients, natural flavours, and recipes passed down with love.</p>
+    </div>
+  </div>
+  <div class="menu-tabs">
+    <!-- ADD MORE TABS: copy a <button> line and add a matching tab-content div below -->
+    <button class="tab-btn active" onclick="showTab('cakes', this)">Cakes</button>
+    <button class="tab-btn" onclick="showTab('pastries', this)">Pastries</button>
+    <button class="tab-btn" onclick="showTab('drinks', this)">Drinks</button>
+    <button class="tab-btn" onclick="showTab('specials', this)">Specials</button>
+  </div>
+  <div id="tab-cakes" class="tab-content active"></div>
+  <div id="tab-pastries" class="tab-content"></div>
+  <div id="tab-drinks" class="tab-content"></div>
+  <div id="tab-specials" class="tab-content"></div>
+</section>
+
+<!-- ============================================================
+     BESTSELLERS SECTION
+     HOW TO EDIT:
+     - Scroll to JavaScript section
+     - Find: const bestsData = [ ... ]
+     - Edit name, description, price, rating, emoji
+============================================================ -->
+<section id="bestsellers">
+  <div class="section-tag">Top Picks</div>
+  <h2 class="section-title">Our Bestsellers</h2>
+  <div class="best-grid">
+    <div class="best-list" id="bestList"></div>
+    <div class="best-feature" id="bestFeature"></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CUSTOM CAKES SECTION
+     HOW TO EDIT:
+     - Change step titles and descriptions
+     - Add/remove form fields in the form card
+     - Change dropdown options in <select> elements
+============================================================ -->
+<section id="custom-cakes">
+  <div class="custom-grid">
+    <div>
+      <div class="section-tag">Custom Orders</div>
+      <h2 class="section-title">Your Dream Cake, Crafted</h2>
+      <p class="section-sub">Celebrate every milestone with a cake designed just for you — from concept to creation, we bring your vision to life.</p>
+      <div class="custom-steps">
+        <!-- EDIT STEPS: change h4 title and p description -->
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Choose Your Base</h4>
+            <p>Select from vanilla, chocolate, red velvet, matcha, and more</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Pick Your Flavour</h4>
+            <p>Mix and match fillings — fresh fruit, ganache, cream cheese</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Design & Decorate</h4>
+            <p>Share your theme, message, or inspiration with us</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Delivered Fresh</h4>
+            <p>Pick up in-store or get doorstep delivery in Coimbatore</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="custom-form-card">
+      <div class="form-title">Request a Custom Cake</div>
+      <form id="orderForm" onsubmit="handleCustomCakeSubmit(event)">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" name="name" placeholder="e.g. Priya Ramesh" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" placeholder="+91 9384784409" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Occasion</label>
+            <select name="occasion">
+              <option>Birthday</option>
+              <option>Wedding</option>
+              <option>Anniversary</option>
+              <option>Baby Shower</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Delivery Date</label>
+            <input type="date" name="delivery_date" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Flavour Preference</label>
+            <select name="flavour">
+              <option>Chocolate</option>
+              <option>Vanilla</option>
+              <option>Red Velvet</option>
+              <option>Matcha</option>
+              <option>Butterscotch</option>
+              <option>Mango</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Weight</label>
+            <select name="weight">
+              <option>0.5 kg</option>
+              <option>1.0 kg</option>
+              <option>2.0 kg</option>
+              <option>3.0+ kg</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" name="eggless" id="eggless" style="width: auto;">
+            <label for="eggless" style="margin: 0; padding-top: 5px;">Eggless</label>
+          </div>
+          <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" name="urgent" id="urgent" style="width: auto;">
+            <label for="urgent" style="margin: 0; padding-top: 5px;">Urgent Order</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Delivery/Pickup Time</label>
+          <input type="time" name="delivery_time" required>
+        </div>
+        <div class="form-group">
+          <label>Reference Image (Optional)</label>
+          <input type="file" name="reference_image" accept="image/*" style="background: white;">
+        </div>
+        <div class="form-group">
+          <label>Custom Message & Instructions</label>
+          <textarea name="message" placeholder="Message on cake, design ideas..." required></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%" id="submitOrderBtn">
+          Send Request
+        </button>
+        <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 10px;">
+          You will be redirected to WhatsApp to confirm your order details.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     GALLERY SECTION
+     HOW TO ADD REAL PHOTOS:
+     Replace the emoji spans with:
+     <img src="your-image.jpg" style="width:100%;height:100%;object-fit:cover" alt="description">
+     Change the overlay text to match your photo
+============================================================ -->
+<section id="gallery">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;margin-bottom:0">
+    <div>
+      <div class="section-tag">Gallery</div>
+      <h2 class="section-title">A Feast for the Eyes</h2>
+    </div>
+    <button class="btn-outline" onclick="showToast('Full gallery coming soon!')">View All Photos</button>
+  </div>
+  <div class="gallery-grid" style="margin-top:2rem">
+    <!-- ADD MORE ITEMS: copy a gallery-item div and change emoji/overlay text -->
+    <div class="gallery-item"><img src="images/hero_berry_cake_1775941360420.png" style="width:100%;height:100%;object-fit:cover" alt="Forest Berry Cake"><div class="gallery-overlay">Forest Berry Cake</div></div>
+    <div class="gallery-item"><img src="images/chocolate_royale_1775941374669.png" style="width:100%;height:100%;object-fit:cover" alt="Chocolate Royale"><div class="gallery-overlay">Slice Heaven</div></div>
+    <div class="gallery-item"><img src="images/strawberry_bliss_1775941388376.png" style="width:100%;height:100%;object-fit:cover" alt="Strawberry Bliss"><div class="gallery-overlay">Strawberry Bliss</div></div>
+    <div class="gallery-item"><img src="images/artisan_coffee_1775941417853.png" style="width:100%;height:100%;object-fit:cover" alt="Artisan Coffee"><div class="gallery-overlay">Artisan Coffee</div></div>
+    <div class="gallery-item"><img src="images/pastry_display_1775941433075.png" style="width:100%;height:100%;object-fit:cover" alt="Morning Pastry"><div class="gallery-overlay">Morning Pastry</div></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ABOUT SECTION
+     HOW TO EDIT:
+     - Change the quote and founder name
+     - Change the 4 mini card icons/titles/descriptions
+     - Change the about text paragraphs
+     - Change the values list items
+============================================================ -->
+<section id="about">
+  <div class="about-grid">
+    <div>
+      <div class="about-card-main">
+        <span class="about-icon">👩🍳</span>  <!-- CHANGE ICON -->
+        <p class="about-quote">"We don't just bake cakes — we bake memories, moments, and a little bit of magic."</p>  <!-- CHANGE QUOTE -->
+        <div class="about-author">— Founder, Destin-Ate Cake Cafe</div>  <!-- CHANGE NAME -->
+      </div>
+      <div class="about-mini-cards">
+        <!-- EDIT EACH MINI CARD: icon, title, description -->
+        <div class="about-mini"><div class="about-mini-icon">🌿</div><h4>Natural Ingredients</h4><p>No artificial preservatives or colours</p></div>
+        <div class="about-mini"><div class="about-mini-icon">🤍</div><h4>Made with Love</h4><p>Every layer, every swirl, by hand</p></div>
+        <div class="about-mini"><div class="about-mini-icon">🎁</div><h4>Gift-Ready</h4><p>Beautiful packaging for every occasion</p></div>
+        <div class="about-mini"><div class="about-mini-icon">🚚</div><h4>Local Delivery</h4><p>Fresh to your door in Coimbatore</p></div>
+      </div>
+    </div>
+    <div class="about-text">
+      <div class="section-tag">Our Story</div>
+      <h2 class="section-title">A Sweet Beginning</h2>
+      <p>Destin-Ate was born from a simple belief: that every person deserves a cake that feels like it was made just for them. Founded in Coimbatore, we started as a small home bakery with big dreams.</p>  <!-- CHANGE STORY -->
+      <h3>Our Philosophy</h3>
+      <p>We source the finest local ingredients, work with seasonal flavours, and believe that a great cake should tell a story. Whether it is a simple slice of chai-spiced cake or a towering wedding centerpiece — we put our heart into every bake.</p>
+      <div class="values-list">
+        <!-- ADD/REMOVE VALUES: copy a .value-item div -->
+        <div class="value-item"><div class="value-dot"></div>Freshly baked every morning, never day-old</div>
+        <div class="value-item"><div class="value-dot"></div>No artificial colours or preservatives</div>
+        <div class="value-item"><div class="value-dot"></div>Customisation for every dietary need</div>
+        <div class="value-item"><div class="value-dot"></div>Eco-friendly packaging</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     BLOG SECTION
+     HOW TO ADD MORE POSTS: Copy a .blog-card div block and change:
+     - blog-img class (b1/b2/b3) or add b4 with a new background color in CSS
+     - blog-cat, blog-title, blog-excerpt, blog-meta
+============================================================ -->
+<section id="blog">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem">
+    <div>
+      <div class="section-tag">From Our Kitchen</div>
+      <h2 class="section-title">Stories & Recipes</h2>
+    </div>
+    <button class="btn-outline" onclick="showToast('Full blog coming soon!')">All Posts</button>
+  </div>
+  <div class="blog-grid">
+    <div class="blog-card">
+      <div class="blog-img b1"><img src="images/sponge_cake_blog_1775951648393.png" style="width:100%;height:100%;object-fit:cover" alt="Perfect Sponge Cake"></div>
+      <div class="blog-body">
+        <div class="blog-cat">Tips & Tricks</div>  <!-- CHANGE CATEGORY -->
+        <div class="blog-title">5 Secrets to a Perfect Sponge Cake Every Time</div>  <!-- CHANGE TITLE -->
+        <div class="blog-excerpt">From room-temperature eggs to the art of folding — master these techniques for cloud-light results.</div>
+        <div class="blog-meta"><span>June 12, 2025</span><span>5 min read</span></div>
+      </div>
+    </div>
+    <div class="blog-card">
+      <div class="blog-img b2"><img src="images/mango_cake_blog_1775951660637.png" style="width:100%;height:100%;object-fit:cover" alt="Mango Cake"></div>
+      <div class="blog-body">
+        <div class="blog-cat">Seasonal Special</div>
+        <div class="blog-title">Mango Season is Here — Our Top 3 Mango Cake Recipes</div>
+        <div class="blog-excerpt">Celebrate the king of fruits with these luscious, tropical cake creations straight from our kitchen.</div>
+        <div class="blog-meta"><span>May 28, 2025</span><span>4 min read</span></div>
+      </div>
+    </div>
+    <div class="blog-card">
+      <div class="blog-img b3"><img src="images/wedding_cake_blog_1775951675912.png" style="width:100%;height:100%;object-fit:cover" alt="Wedding Cake"></div>
+      <div class="blog-body">
+        <div class="blog-cat">Inspiration</div>
+        <div class="blog-title">How to Choose the Perfect Wedding Cake for Your Big Day</div>
+        <div class="blog-excerpt">Tiers, flavours, and fondant — a complete guide to finding the wedding cake of your dreams.</div>
+        <div class="blog-meta"><span>May 10, 2025</span><span>6 min read</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     REVIEWS SECTION
+============================================================ -->
+<section id="reviews">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <div class="section-tag" style="justify-content: center;">Testimonials</div>
+    <h2 class="section-title">What Our Customers Say</h2>
+  </div>
+  <div class="reviews-grid" id="reviewsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+    <!-- Reviews fetched via JS -->
+  </div>
+  <div class="custom-form-card" style="max-width: 500px; margin: 0 auto;">
+    <div class="form-title">Leave a Review</div>
+    <form id="reviewForm" onsubmit="handleReviewSubmit(event)">
+      <div class="form-group"><label>Name</label><input type="text" name="name" required></div>
+      <div class="form-group"><label>Rating (1-5)</label><input type="number" name="rating" min="1" max="5" value="5" required></div>
+      <div class="form-group"><label>Message</label><textarea name="message" required></textarea></div>
+      <button type="submit" class="btn-outline" style="width:100%">Submit Review</button>
+    </form>
+  </div>
+</section>
+
+<!-- ============================================================
+     ORDER ONLINE SECTION
+     HOW TO EDIT:
+     - Change the title and description
+     - Change the 3 order options (icon, label, sub-label)
+     - Link the button to your real ordering system
+============================================================ -->
+<section id="order">
+  <div class="order-inner">
+    <div class="order-tag">Order Online</div>
+    <h2 class="order-title">Get Your Cake Delivered</h2>
+    <p class="order-sub">Choose how you would like to enjoy Destin-Ate. We deliver fresh across Coimbatore, or you can walk in any day.</p>
+    <div class="order-cards">
+      <div class="order-opt selected" onclick="selectOrder(this)">
+        <span class="order-opt-icon">🚚</span>
+        <div class="order-opt-label">Home Delivery</div>
+        <div class="order-opt-sub">Within Coimbatore</div>
+      </div>
+      <div class="order-opt" onclick="selectOrder(this)">
+        <span class="order-opt-icon">🛍️</span>
+        <div class="order-opt-label">Pick Up</div>
+        <div class="order-opt-sub">Ready in 30 min</div>
+      </div>
+      <div class="order-opt" onclick="selectOrder(this)">
+        <span class="order-opt-icon">☕</span>
+        <div class="order-opt-label">Dine In</div>
+        <div class="order-opt-sub">Table for you</div>
+      </div>
+    </div>
+    <!-- TO LINK TO REAL ORDER PAGE: change onclick to: window.location.href='your-order-url' -->
+    <button class="btn-white" onclick="showToast('Redirecting to order page...')">Start Your Order</button>
+  </div>
+</section>
+
+<!-- ============================================================
+     CONTACT SECTION
+     HOW TO EDIT:
+     - Change address, hours, phone, email below
+     - Replace map placeholder with a real Google Maps embed
+============================================================ -->
+<section id="contact">
+  <div class="section-tag">Find Us</div>
+  <h2 class="section-title">Visit or Get in Touch</h2>
+  <div class="contact-grid">
+    <div>
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+          <div>
+            <h4>Location</h4>
+            <p>Coimbatore, Tamil Nadu<br>Home Bakery</p>  <!-- CHANGE ADDRESS -->
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+          <div>
+            <h4>Working Hours</h4>
+            <p>Monday – Saturday: 9:00 AM – 8:00 PM<br>Sunday: 10:00 AM – 5:00 PM</p>  <!-- CHANGE HOURS -->
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
+          <div>
+            <h4>Phone / WhatsApp</h4>
+            <p>+91 9384784409</p>  <!-- CHANGE PHONE -->
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div>
+          <div>
+            <h4>Email</h4>
+            <p>hello@destinate.in</p>  <!-- CHANGE EMAIL -->
+          </div>
+        </div>
+      </div>
+      <!-- Real Google Map Embed for Coimbatore -->
+      <div style="border-radius: 4px; overflow: hidden; height: 180px; margin-top: 2rem; border: 1px solid var(--beige-dark); box-shadow: 0 4px 16px rgba(0,0,0,0.05);">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15665.808000490793!2d76.95311894481077!3d11.004452145398246!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba859af2f971cb5%3A0x2fc1c81e183ed282!2sCoimbatore%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1712869000000!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+    <div class="custom-form-card">
+      <div class="form-title">Send Us a Message</div>
+      <form id="contactForm" onsubmit="handleFormSubmit(event, '/api/contact', 'Message sent! We will reply within 24 hours.')">
+        <div class="form-group"><label>Name</label><input type="text" name="name" placeholder="Your name" required></div>
+        <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="your@email.com" required></div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select name="subject">
+            <option>General Enquiry</option>
+            <option>Custom Cake Order</option>
+            <option>Feedback</option>
+            <option>Catering</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea name="message" placeholder="How can we help?" required></textarea></div>
+        <button type="submit" class="btn-primary" style="width:100%">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     HOW TO EDIT:
+     - Change social media links (href="https://instagram.com/yourpage")
+     - Change footer column links
+     - Change copyright text
+============================================================ -->
+
+<a href="https://wa.me/919384784409?text=Hi! I would like to order a cake." target="_blank" style="position: fixed; bottom: 30px; left: 30px; background-color: #25d366; color: white; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+  <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.01 2.002c-5.52 0-9.99 4.47-9.99 9.99 0 1.95.56 3.78 1.54 5.34L2 22l4.82-1.52c1.51.87 3.25 1.37 5.19 1.37 5.52 0 10-4.47 10-10s-4.48-10-10-10zm5.66 14.36c-.26.73-1.51 1.41-2.09 1.48-.56.07-1.28.16-3.55-.77-2.73-1.12-4.48-3.92-4.62-4.1-.14-.19-1.1-1.47-1.1-2.8s.69-1.99.93-2.25c.23-.26.51-.33.68-.33.17 0 .34 0 .49.01.16.01.37-.06.57.43.2.49.68 1.66.75 1.8.07.14.12.3.02.49-.1.19-.15.3-.3.49-.14.19-.3.4-.43.54-.14.14-.3.3-.14.58.17.28.75 1.23 1.61 1.99 1.11.99 2.05 1.29 2.33 1.43.28.14.45.12.61-.06.17-.19.73-.85.93-1.14.2-.28.4-.23.65-.14.25.09 1.59.75 1.86.89.28.14.46.21.53.33.07.11.07.65-.19 1.38z"/>
+  </svg>
+</a>
+
+<%- include('../partials/footer') %>

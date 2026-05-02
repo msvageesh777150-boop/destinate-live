@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Area | Destin-Ate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body { background: var(--cream); font-family: 'Jost', sans-serif; margin:0; padding:0; }
+    .admin-nav { background: var(--sage); color: white; padding: 20px; display:flex; justify-content: space-between; align-items:center; }
+    .admin-nav h2 { margin: 0; font-family: 'Playfair Display', serif; }
+    .admin-nav a { color: white; text-decoration: none; border: 1px solid white; padding: 5px 15px; border-radius: 4px; }
+    .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; gap: 30px; }
+    .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { text-align: left; padding: 15px; border-bottom: 1px solid var(--beige-dark); }
+    th { color: var(--text-muted); font-weight: 500; text-transform: uppercase; font-size: 0.85rem; }
+    .status { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .status.Pending { background: #fff3cd; color: #856404; }
+    .status.Delivered { background: #d4edda; color: #155724; }
+  </style>
+</head>
+<body>
+  <div class="admin-nav">
+    <h2>Destin-Ate Admin Dashboard</h2>
+    <a href="/">← Back to Live Site</a>
+  </div>
+
+  <div class="container">
+    <div class="card">
+        <h3>Live Orders Overview</h3>
+        <p style="color:var(--text-muted)">All custom E-Commerce orders are fetched from the secure Database.</p>
+        
+        <% if(orders.length === 0) { %>
+            <div style="padding: 40px; text-align:center; color:var(--text-muted)">No orders received yet!</div>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Address</th>
+                        <th>Total Amount</th>
+                        <th>Items</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(o => { %>
+                        <tr>
+                            <td>#DA-<%= o.id %></td>
+                            <td><strong><%= o.name %></strong><br><span style="font-size:0.85rem;color:gray"><%= o.phone %></span></td>
+                            <td style="max-width: 200px;"><%= o.address %> <br><span style="font-size:0.8rem;color:gray">Via <%= o.method %></span></td>
+                            <td style="font-weight:600; color:var(--sage)"><%= o.total %></td>
+                            <td style="max-width: 250px; font-size:0.9rem;">
+                                <% if(o.items && o.items.length) { %>
+                                    <ul style="margin:0; padding-left:20px;">
+                                    <% o.items.forEach(item => { %>
+                                        <li><%= item.qty %>x <%= item.name %></li>
+                                    <% }) %>
+                                    </ul>
+                                <% } %>
+                            </td>
+                            <td><span class="status <%= o.status %>"><%= o.status %></span></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+    
+    <div class="card" style="margin-top: 20px;">
+        <h3>Custom Cake Requests & Inquiries</h3>
+        <p style="color:var(--text-muted)">These are requests submitted through the Custom Cake Order form and general contact page.</p>
+        
+        <% if(typeof messages !== 'undefined' && messages.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Contact</th>
+                        <th>Message / Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% messages.forEach(m => { %>
+                        <tr>
+                            <td style="font-size:0.85rem;color:gray"><%= new Date(m.createdAt).toLocaleDateString() %></td>
+                            <td><strong><%= m.name %></strong></td>
+                            <td style="font-size:0.85rem;"><%= m.phone %><br><%= m.email !== 'N/A' ? m.email : '' %></td>
+                            <td style="max-width:350px; font-size:0.9rem; white-space: pre-wrap;"><%= m.body %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <div style="padding: 40px; text-align:center; color:var(--text-muted)">No inquiries received yet!</div>
+        <% } %>
+    </div>
+  </div>
+</body>
+</html>
