@@ -5,6 +5,7 @@ const path = require('path');
 const multer = require('multer');
 const { createClient } = require('@supabase/supabase-js');
 const { Sequelize, DataTypes } = require('sequelize');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -86,6 +87,39 @@ if (supabaseUrl && supabaseKey && supabaseUrl !== 'your_supabase_project_url') {
 
     // Define relationships if necessary, though flat structure works for fallback
     sequelize.sync().then(() => console.log('✅ SQLite Fallback DB Sync Complete'));
+}
+
+// ==========================================
+// Email Notification Setup
+// ==========================================
+let transporter = null;
+if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+    console.log('✅ Nodemailer Email Transporter initialized');
+} else {
+    console.warn('⚠️ Nodemailer credentials not found. Email notifications are disabled.');
+}
+const ownerEmail = process.env.OWNER_EMAIL || process.env.EMAIL_USER;
+
+async function sendNotificationEmail(subject, text) {
+    if (!transporter || !ownerEmail) return;
+    try {
+        await transporter.sendMail({
+            from: `"Destin-Ate Website" <${process.env.EMAIL_USER}>`,
+            to: ownerEmail,
+            subject: subject,
+            text: text
+        });
+        console.log('📧 Notification email sent successfully.');
+    } catch (err) {
+        console.error('❌ Failed to send notification email:', err);
+    }
 }
 
 // ==========================================
@@ -205,6 +239,11 @@ app.post('/api/order', upload.single('reference_image'), async (req, res) => {
         }
 
         console.log(`🎉 New Order Saved (ID: ${newOrder.id})`);
+        
+        // Trigger Email Notification
+        const emailText = `New Order Received!\n\nName: ${payload.name || 'Customer'}\nPhone: ${payload.phone}\nMethod: ${payload.method}\nAmount: ${payload.total}\n\nAddress:\n${payload.address}\n\nCake details:\nOccasion: ${payload.occasion}\nFlavour: ${payload.flavour}\nWeight: ${payload.weight}\nEggless: ${egglessVal}\nUrgent: ${urgentVal}\nDelivery: ${payload.delivery_date} at ${payload.delivery_time}\n\nInstructions: ${payload.message}\n\nReference Image URL: ${imageUrl || 'N/A'}`;
+        sendNotificationEmail(`New Order from ${payload.name || 'Customer'}!`, emailText);
+
         res.status(200).json({ success: true, message: 'Order Processed!', order: newOrder });
     } catch(err) {
         console.error(err);
@@ -259,6 +298,11 @@ app.post('/api/contact', async (req, res) => {
                 body: finalBody
             });
         }
+
+        // Trigger Email Notification
+        const emailText = `New Message / Inquiry!\n\nName: ${payload.name || payload.contactName}\nPhone: ${payload.phone || payload.contactPhone || 'N/A'}\nEmail: ${payload.email || 'N/A'}\n\nMessage:\n${finalBody}`;
+        sendNotificationEmail(`New Inquiry from ${payload.name || payload.contactName}!`, emailText);
+
         res.status(200).json({ success: true, message: 'Message Saved!' });
     } catch(err) {
         res.status(500).json({ success: false });
