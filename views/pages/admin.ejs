@@ -27,8 +27,11 @@
   </div>
 
 <% 
-    const ecommerceOrders = orders.filter(o => o.items && o.items.length > 0);
-    const customCakeOrders = orders.filter(o => o.occasion && o.occasion.length > 0);
+    const isCustomCake = (o) => o.method === 'Custom Cake' || o.occasion || (o.items && o.items.length > 0 && o.items[0].name === 'Custom Cake Request');
+    
+    const ecommerceOrders = orders.filter(o => o.items && o.items.length > 0 && !isCustomCake(o));
+    const customCakeOrders = orders.filter(o => isCustomCake(o));
+    const contactInquiries = orders.filter(o => o.method === 'Contact Form');
 %>
 
   <div class="container">
@@ -78,7 +81,7 @@
         <h3>Custom Cake Requests & Inquiries</h3>
         <p style="color:var(--text-muted)">These are requests submitted through the Custom Cake Order form and general contact page.</p>
         
-        <% if((messages && messages.length > 0) || customCakeOrders.length > 0) { %>
+        <% if((messages && messages.length > 0) || customCakeOrders.length > 0 || contactInquiries.length > 0) { %>
             <table>
                 <thead>
                     <tr>
@@ -91,14 +94,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% customCakeOrders.forEach(o => { %>
+                    <% customCakeOrders.forEach(o => { 
+                        let cc = o;
+                        if (o.items && o.items.length > 0 && o.items[0].name === 'Custom Cake Request') {
+                            cc = o.items[0];
+                        }
+                    %>
                         <tr>
                             <td style="font-size:0.85rem;color:gray"><%= new Date(o.createdAt || o.created_at || Date.now()).toLocaleDateString() %></td>
                             <td><span style="background:var(--sage-pale); color:var(--sage); padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Custom Cake</span></td>
                             <td><strong><%= o.name %></strong></td>
                             <td style="font-size:0.85rem;"><%= o.phone %></td>
-                            <td style="max-width:350px; font-size:0.9rem; white-space: pre-wrap;"><strong>Occasion:</strong> <%= o.occasion %><br><strong>Flavour:</strong> <%= o.flavour %><br><strong>Weight:</strong> <%= o.weight %><br><strong>Delivery:</strong> <%= o.delivery_date %> at <%= o.delivery_time %><br><strong>Instructions:</strong> <%= o.message %><% if(o.image_url) { %><br><a href="<%= o.image_url %>" target="_blank" style="color:var(--sage); text-decoration:underline;">View Reference Image</a><% } %></td>
+                            <td style="max-width:350px; font-size:0.9rem; white-space: pre-wrap;"><strong>Occasion:</strong> <%= cc.occasion %><br><strong>Flavour:</strong> <%= cc.flavour %><br><strong>Weight:</strong> <%= cc.weight %><br><strong>Delivery:</strong> <%= cc.delivery_date %> at <%= cc.delivery_time %><br><strong>Instructions:</strong> <%= o.message || cc.instructions || '' %><% if(cc.image_url) { %><br><a href="<%= cc.image_url %>" target="_blank" style="color:var(--sage); text-decoration:underline;">View Reference Image</a><% } %></td>
                             <td><span class="status <%= o.status %>"><%= o.status %></span></td>
+                        </tr>
+                    <% }) %>
+                    <% contactInquiries.forEach(o => { %>
+                        <tr>
+                            <td style="font-size:0.85rem;color:gray"><%= new Date(o.createdAt || o.created_at || Date.now()).toLocaleDateString() %></td>
+                            <td><span style="background:#eef2f5; color:#5c6b73; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">Contact Inquiry</span></td>
+                            <td><strong><%= o.name %></strong></td>
+                            <td style="font-size:0.85rem;"><%= o.phone %><br><%= o.address !== 'N/A' ? o.address : '' %></td>
+                            <td style="max-width:350px; font-size:0.9rem; white-space: pre-wrap;"><%= o.message %></td>
+                            <td>-</td>
                         </tr>
                     <% }) %>
                     <% if (messages) { messages.forEach(m => { %>

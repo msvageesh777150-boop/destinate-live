@@ -231,8 +231,10 @@ app.post('/api/order', upload.single('reference_image'), async (req, res) => {
         const urgentVal = payload.urgent === 'on' || payload.urgent === 'true';
 
         // 2. Save Order to Database
+        let orderData = {};
+        
         if (supabase) {
-            // Supabase Logic
+            // Supabase Logic - strictly use known columns to prevent schema errors
             let customerId = null;
             const { data: existingCustomer } = await supabase.from('Customers').select('id').eq('phone', payload.phone || '').single();
             if (existingCustomer) { customerId = existingCustomer.id; } 
@@ -241,32 +243,42 @@ app.post('/api/order', upload.single('reference_image'), async (req, res) => {
                 if (newCust) customerId = newCust.id;
             }
 
-            const orderData = {
+            orderData = {
                 customer_id: customerId,
-                name: payload.name, // For backwards compat with admin panel view
-                phone: payload.phone, // For backwards compat with admin panel view
-                address: payload.address,
-                method: payload.method,
-                total: payload.total,
-                items: payload.items,
-                occasion: payload.occasion,
-                flavour: payload.flavour,
-                weight: payload.weight,
-                eggless: egglessVal,
-                message: payload.message,
-                delivery_date: payload.delivery_date,
-                delivery_time: payload.delivery_time,
-                urgent: urgentVal,
-                image_url: imageUrl,
+                name: payload.name, 
+                phone: payload.phone, 
+                address: payload.address || 'N/A',
+                method: payload.method || (payload.occasion ? 'Custom Cake' : 'Website'),
+                total: payload.total || '0',
+                message: payload.message || '',
                 status: 'Pending'
             };
+            
+            // If it's a custom cake, pack the extra fields into the JSON items array to avoid column-not-found errors
+            if (payload.occasion) {
+                orderData.items = [{
+                    name: 'Custom Cake Request',
+                    qty: 1,
+                    occasion: payload.occasion,
+                    flavour: payload.flavour,
+                    weight: payload.weight,
+                    eggless: egglessVal,
+                    urgent: urgentVal,
+                    delivery_date: payload.delivery_date,
+                    delivery_time: payload.delivery_time,
+                    image_url: imageUrl
+                }];
+            } else {
+                orderData.items = payload.items || [];
+            }
 
             const { data: insertedOrder, error: orderErr } = await supabase.from('Orders').insert([orderData]).select().single();
             if (!orderErr) newOrder = insertedOrder;
+            else console.error("Supabase Insert Error:", orderErr);
             
         } else if (sequelize) {
             // SQLite Fallback Logic
-            const orderData = {
+            orderData = {
                 name: payload.name || 'Customer',
                 phone: payload.phone || '',
                 address: payload.address || '',
@@ -281,7 +293,7 @@ app.post('/api/order', upload.single('reference_image'), async (req, res) => {
                 delivery_date: payload.delivery_date,
                 delivery_time: payload.delivery_time,
                 urgent: urgentVal,
-                image_url: null,
+                image_url: imageUrl,
                 status: 'Pending'
             };
             const sqlOrder = await SqlOrder.create(orderData);
@@ -339,7 +351,17 @@ app.post('/api/contact', async (req, res) => {
         if (payload.occasion) finalBody = `🎂 Custom Cake Inquiry:\nOccasion: ${payload.occasion}\nDate: ${payload.delivery_date}\nFlavour: ${payload.flavour}\n\nInstructions: ${payload.message}`;
         
         if (supabase) {
-            // Save to messages table if needed, or just Reviews
+            // Save to Orders table to avoid missing table issues
+            await supabase.from('Orders').insert([{
+                name: payload.name || payload.contactName || 'Inquiry',
+                phone: payload.phone || payload.contactPhone || 'N/A',
+                address: payload.email || 'N/A',
+                method: 'Contact Form',
+                total: '0',
+                items: [],
+                message: finalBody,
+                status: 'Inquiry'
+            }]);
         } else if (sequelize) {
             await SqlMessage.create({
                 name: payload.name || payload.contactName,
