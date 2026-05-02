@@ -11,36 +11,29 @@
 ============================================================ */
 const menuData = {
   cakes: [
-    { e: '<img src="images/hero_berry_cake_1775941360420.png" style="width:100%;height:100%;object-fit:cover">', n: 'Forest Berry Dream',     d: 'Vanilla sponge, mixed berry compote, whipped cream',      p: '₹680', w: 'per 500g', c: 'Signature' },
-    { e: '<img src="images/chocolate_royale_1775941374669.png" style="width:100%;height:100%;object-fit:cover">', n: 'Dark Chocolate Royale',  d: 'Belgian chocolate ganache, salted caramel layers',         p: '₹720', w: 'per 500g', c: 'Premium'   },
-    { e: '<img src="images/strawberry_bliss_1775941388376.png" style="width:100%;height:100%;object-fit:cover">', n: 'Strawberry Bliss',       d: 'Fresh strawberries, cream cheese frosting, sponge base',   p: '₹580', w: 'per 500g', c: 'Fresh'     },
-    { e: '<img src="images/matcha_cake_1775941402073.png" style="width:100%;height:100%;object-fit:cover">', n: 'Matcha Cloud Cake',      d: 'Japanese matcha, white chocolate, light mousse',           p: '₹650', w: 'per 500g', c: 'Seasonal'  },
-    { e: '<img src="images/lemon_tart_1775943651880.png" style="width:100%;height:100%;object-fit:cover">', n: 'Mango Tango',            d: 'Alphonso mango pulp, mascarpone, coconut crumble',         p: '₹620', w: 'per 500g', c: 'Seasonal'  },
-    { e: '<img src="images/red_velvet_1775943608641.png" style="width:100%;height:100%;object-fit:cover">', n: 'Red Velvet Classic',     d: 'Classic cream cheese frosting, cocoa velvet layers',       p: '₹560', w: 'per 500g', c: 'Classic'   }
+    { e: '<img src="images/choco_truffle_cake_1777733985044.png" style="width:100%;height:100%;object-fit:cover">', n: 'Choco Truffle', d: 'Layers of soft Chocolate sponge filled with dark chocolate truffle and wrapped in a rich ganache', p: '₹700', w: 'per 1/2 kg', c: 'Premium' },
+    { e: '<img src="images/lotus_biscoff_cake_1777734003522.png" style="width:100%;height:100%;object-fit:cover">', n: 'Lotus Biscoff', d: 'Vanilla sponge layered with creamy Lotus Biscoff buttercream frosting and rich caramelized biscuit flavour', p: '₹785', w: 'per 1/2 kg', c: 'Signature' },
+    { e: '<img src="images/hero_berry_cake_1775941360420.png" style="width:100%;height:100%;object-fit:cover">', n: 'Black Forest', d: 'Chocolate sponge layered with Buttercream or Whipped cream, Cherries and Chocolate flakes', p: '₹460', w: 'per 1/2 kg', c: 'Classic' },
+    { e: '<img src="images/strawberry_bliss_1775941388376.png" style="width:100%;height:100%;object-fit:cover">', n: 'White Forest', d: 'Vanilla sponge layered with Buttercream or Whipped Cream, Cherries and White chocolate shavings', p: '₹440', w: 'per 1/2 kg', c: 'Classic' }
   ],
-  pastries: [
-    { e: '<img src="images/pastry_display_1775941433075.png" style="width:100%;height:100%;object-fit:cover">', n: 'Butter Croissant',       d: 'Flaky French-style, baked fresh every morning',            p: '₹80',  w: 'per pc', c: 'Morning'   },
-    { e: '<img src="images/cupcake_1775943623320.png" style="width:100%;height:100%;object-fit:cover">', n: 'Rosette Cupcake',        d: 'Vanilla, chocolate, or red velvet with piped frosting',    p: '₹120', w: 'per pc', c: 'Favourites'},
-    { e: '<img src="images/doughnut_1775943638050.png" style="width:100%;height:100%;object-fit:cover">', n: 'Glazed Doughnut',        d: 'Soft brioche dough, seasonal glazes',                      p: '₹90',  w: 'per pc', c: 'Daily'     },
-    { e: '<img src="images/lemon_tart_1775943651880.png" style="width:100%;height:100%;object-fit:cover">', n: 'Lemon Tart',             d: 'Tangy lemon curd in a buttery pastry shell',               p: '₹160', w: 'per pc', c: 'Patisserie'},
-    { e: '<img src="images/cupcake_1775943623320.png" style="width:100%;height:100%;object-fit:cover">', n: 'Creme Brulee',           d: 'Classic vanilla bean, torched sugar crust',                p: '₹180', w: 'per pc', c: 'Patisserie'},
-    { e: '<img src="images/pastry_display_1775941433075.png" style="width:100%;height:100%;object-fit:cover">', n: 'Banana Walnut Bread',    d: 'Moist loaf, toasted walnuts, natural sweetness',           p: '₹200', w: 'per loaf (350g)', c: 'Bakes'     }
+  buttercream: [
+    { e: '<img src="images/lotus_biscoff_cake_1777734003522.png" style="width:100%;height:100%;object-fit:cover">', n: 'Lotus Biscoff', d: 'Creamy Lotus Biscoff buttercream', p: '₹1053', w: 'per 1/2 kg', c: 'Premium' },
+    { e: '<img src="images/chocolate_royale_1775941374669.png" style="width:100%;height:100%;object-fit:cover">', n: 'Salted Caramel', d: 'Vanilla sponge layered with buttery caramel cream and a hint of sea salt', p: '₹750', w: 'per 1/2 kg', c: 'Signature' },
+    { e: '<img src="images/mango_cake_1777734028570.png" style="width:100%;height:100%;object-fit:cover">', n: 'Mango', d: 'Vanilla sponge layered with Fresh Mango cream and topped with fresh fruit', p: '₹590', w: 'per 1/2 kg', c: 'Seasonal' },
+    { e: '<img src="images/hero_berry_cake_1775941360420.png" style="width:100%;height:100%;object-fit:cover">', n: 'Blueberry', d: 'Vanilla sponge filled with smooth blueberry compote and topped with fresh fruit', p: '₹595', w: 'per 1/2 kg', c: 'Seasonal' }
   ],
-  drinks: [
-    { e: '<img src="images/artisan_coffee_1775941417853.png" style="width:100%;height:100%;object-fit:cover">', n: 'Signature Latte',        d: 'Double espresso, steamed oat milk, hint of cinnamon',      p: '₹180', w: 'per 350ml cup', c: 'Coffee'    },
-    { e: '<img src="images/matcha_cake_1775941402073.png" style="width:100%;height:100%;object-fit:cover">', n: 'Matcha Latte',           d: 'Ceremonial grade matcha, steamed milk, honey',             p: '₹200', w: 'per 350ml cup', c: 'Specialty' },
-    { e: '<img src="images/boba_tea_1775943666969.png" style="width:100%;height:100%;object-fit:cover">', n: 'Brown Sugar Boba',       d: 'Milk tea with homemade brown sugar boba pearls',           p: '₹220', w: 'per 500ml cup', c: 'Trending'  },
-    { e: '<img src="images/strawberry_bliss_1775941388376.png" style="width:100%;height:100%;object-fit:cover">', n: 'Berry Smoothie',         d: 'Mixed berries, banana, Greek yogurt, agave',               p: '₹190', w: 'per 400ml cup', c: 'Fresh'     },
-    { e: '<img src="images/artisan_coffee_1775941417853.png" style="width:100%;height:100%;object-fit:cover">', n: 'Hot Chocolate',          d: 'Belgian cocoa, steamed milk, marshmallows',                p: '₹160', w: 'per 350ml cup', c: 'Comfort'   },
-    { e: '<img src="images/artisan_coffee_1775941417853.png" style="width:100%;height:100%;object-fit:cover">', n: 'Herbal Brew',            d: 'Chamomile, lavender, honey — caffeine free',               p: '₹140', w: 'per 1L pot', c: 'Wellness'  }
+  brownies: [
+    { e: '<img src="images/fudgy_brownie_1777733969773.png" style="width:100%;height:100%;object-fit:cover">', n: 'Fudgy Brownie', d: 'Classic rich and fudgy chocolate brownie', p: '₹260', w: '4 pcs', c: 'Classic' },
+    { e: '<img src="images/fudgy_brownie_1777733969773.png" style="width:100%;height:100%;object-fit:cover">', n: 'Nutella Brownie', d: 'Fudgy brownie loaded with creamy Nutella', p: '₹340', w: '4 pcs', c: 'Premium' },
+    { e: '<img src="images/fudgy_brownie_1777733969773.png" style="width:100%;height:100%;object-fit:cover">', n: 'Choco chip Brownie', d: 'Fudgy brownie loaded with chocolate chips', p: '₹320', w: '4 pcs', c: 'Favourites' },
+    { e: '<img src="images/fudgy_brownie_1777733969773.png" style="width:100%;height:100%;object-fit:cover">', n: 'Double chocolate Brownie', d: 'Extra chocolatey fudgy brownie', p: '₹300', w: '4 pcs', c: 'Favourites' },
+    { e: '<img src="images/fudgy_brownie_1777733969773.png" style="width:100%;height:100%;object-fit:cover">', n: 'Triple chocolate Brownie', d: 'The ultimate chocolate brownie experience', p: '₹320', w: '4 pcs', c: 'Premium' },
+    { e: '<img src="images/fudgy_brownie_1777733969773.png" style="width:100%;height:100%;object-fit:cover">', n: 'Lotus Biscoff Brownie', d: 'Fudgy brownie swirled with Lotus Biscoff spread', p: '₹340', w: '4 pcs', c: 'Signature' }
   ],
-  specials: [
-    { e: '<img src="images/wedding_cake_1775943682261.png" style="width:100%;height:100%;object-fit:cover">', n: 'Celebration Bundle',     d: '6-inch cake + 6 cupcakes + 2 lattes',                      p: '₹1,200', w: 'per combo box', c: 'Bundle'  },
-    { e: '<img src="images/wedding_cake_1775943682261.png" style="width:100%;height:100%;object-fit:cover">', n: 'Wedding Cake Tasting',   d: '5 flavour samples + consultation session',                  p: '₹500',   w: 'per session', c: 'Bridal'  },
-    { e: '<img src="images/cupcake_1775943623320.png" style="width:100%;height:100%;object-fit:cover">', n: 'Kids Party Pack',        d: 'Funfetti cake + 12 cupcakes + juice boxes',                 p: '₹1,800', w: 'serves roughly 10', c: 'Party'   },
-    { e: '<img src="images/lemon_tart_1775943651880.png" style="width:100%;height:100%;object-fit:cover">', n: 'Vegan Delight Box',      d: '4 vegan pastries + plant-based latte',                      p: '₹420',   w: 'serves 1-2', c: 'Vegan'   },
-    { e: '<img src="images/chocolate_royale_1775941374669.png" style="width:100%;height:100%;object-fit:cover">', n: 'Festive Season Box',     d: 'Seasonal limited-edition bakes collection',                 p: '₹650',   w: 'per box', c: 'Seasonal'},
-    { e: '<img src="images/hero_berry_cake_1775941360420.png" style="width:100%;height:100%;object-fit:cover">', n: 'Gift Hamper',            d: 'Assorted cakes, cookies, and a personalised card',          p: '₹980',   w: 'per 1 basket', c: 'Gift'    }
+  bento: [
+    { e: '<img src="images/bento_cake_1777734044368.png" style="width:100%;height:100%;object-fit:cover">', n: 'Choco truffle Bento', d: 'Cute little Choco truffle bento cake, customisation available', p: '₹230', w: 'per piece', c: 'Mini' },
+    { e: '<img src="images/bento_cake_1777734044368.png" style="width:100%;height:100%;object-fit:cover">', n: 'Black forest Bento', d: 'Cute little Black forest bento cake, customisation available', p: '₹220', w: 'per piece', c: 'Mini' },
+    { e: '<img src="images/bento_cake_1777734044368.png" style="width:100%;height:100%;object-fit:cover">', n: 'White forest Bento', d: 'Cute little White forest bento cake, customisation available', p: '₹240', w: 'per piece', c: 'Mini' }
   ]
 };
 
@@ -82,10 +75,10 @@ buildMenu();
    BESTSELLERS DATA
 ============================================================ */
 const bestsData = [
-  { e: '<img src="images/hero_berry_cake_1775941360420.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Forest Berry Dream',    s: 'Vanilla & mixed berry compote',   p: '₹680', w: 'per 500g', r: '★★★★★', d: 'Our absolute crowd-pleaser. A light vanilla sponge layered with house-made mixed berry compote and clouds of fresh whipped cream.' },
-  { e: '<img src="images/chocolate_royale_1775941374669.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Dark Chocolate Royale', s: 'Belgian chocolate ganache',       p: '₹720', w: 'per 500g', r: '★★★★★', d: 'For the serious chocolate lover. Three layers of moist chocolate sponge, filled with silky Belgian ganache and a whisper of sea salt caramel.' },
-  { e: '<img src="images/strawberry_bliss_1775941388376.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Strawberry Bliss',      s: 'Fresh strawberry cream cheese',   p: '₹580', w: 'per 500g', r: '★★★★☆', d: 'Summer in every slice. We use only in-season fresh strawberries with a smooth cream cheese frosting on a light sponge.' },
-  { e: '<img src="images/matcha_cake_1775941402073.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Matcha Cloud Cake',     s: 'Japanese matcha mousse',          p: '₹650', w: 'per 500g', r: '★★★★★', d: 'A delicate balance of earthy and sweet. Ceremonial-grade matcha mousse layered with white chocolate cream on a feather-light genoise base.' }
+  { e: '<img src="images/choco_truffle_cake_1777733985044.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Choco Truffle',    s: 'Dark chocolate truffle & rich ganache',   p: '₹700', w: 'per 1/2 kg', r: '★★★★★', d: 'Our absolute crowd-pleaser. Layers of soft Chocolate sponge filled with dark chocolate truffle and wrapped in a rich ganache.' },
+  { e: '<img src="images/lotus_biscoff_cake_1777734003522.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Lotus Biscoff', s: 'Creamy Lotus Biscoff buttercream',       p: '₹785', w: 'per 1/2 kg', r: '★★★★★', d: 'For the serious biscoff lover. Vanilla sponge layered with creamy Lotus Biscoff buttercream frosting and rich caramelized biscuit flavour.' },
+  { e: '<img src="images/fudgy_brownie_1777733969773.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Fudgy Brownie',      s: 'Rich and fudgy chocolate brownie',   p: '₹260', w: '4 pcs', r: '★★★★☆', d: 'Classic rich and fudgy chocolate brownie, perfect for sharing.' },
+  { e: '<img src="images/mango_cake_1777734028570.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Mango Cake',     s: 'Fresh Mango cream',          p: '₹590', w: 'per 1/2 kg', r: '★★★★★', d: 'A delicate balance of earthy and sweet. Vanilla sponge layered with Fresh Mango cream and topped with fresh fruit.' }
 ];
 
 let activeBest = 0;
