@@ -6,6 +6,7 @@ const multer = require('multer');
 const { createClient } = require('@supabase/supabase-js');
 const { Sequelize, DataTypes } = require('sequelize');
 const nodemailer = require('nodemailer');
+const Razorpay = require('razorpay');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,6 +14,17 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+let razorpay = null;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    razorpay = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY_ID,
+        key_secret: process.env.RAZORPAY_KEY_SECRET
+    });
+    console.log('✅ Razorpay initialized');
+} else {
+    console.warn('⚠️ Razorpay keys missing. Using mock responses for online payments.');
+}
 
 // Serve static assets
 app.use(express.static(path.join(__dirname, 'public')));
@@ -156,6 +168,44 @@ app.get('/admin', async (req, res) => {
 // ==========================================
 // Form / Order APIs
 // ==========================================
+app.post('/api/create-razorpay-order', async (req, res) => {
+    try {
+        if (!razorpay) {
+            return res.json({ id: 'order_dummy_' + Date.now(), amount: req.body.amount, currency: "INR" });
+        }
+        const options = {
+            amount: req.body.amount, // amount should be in paise
+            currency: "INR",
+            receipt: "receipt_order_" + Date.now()
+        };
+        const order = await razorpay.orders.create(options);
+        res.json(order);
+    } catch (error) {
+        console.error("Razorpay Order Error:", error);
+        res.status(500).json({ error: "Failed to create Razorpay order" });
+    }
+});
+
+app.post('/api/verify-razorpay-payment', (req, res) => {
+    const crypto = require('crypto');
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    
+    if (!razorpay) {
+        return res.json({ success: true, message: 'Mock payment verified' });
+    }
+
+    const secret = process.env.RAZORPAY_KEY_SECRET;
+    const shasum = crypto.createHmac('sha256', secret);
+    shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const digest = shasum.digest('hex');
+
+    if (digest === razorpay_signature) {
+        res.json({ success: true, message: 'Payment verified' });
+    } else {
+        res.status(400).json({ success: false, message: 'Invalid signature' });
+    }
+});
+
 app.post('/api/order', upload.single('reference_image'), async (req, res) => {
     try {
         const payload = req.body;

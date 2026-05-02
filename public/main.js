@@ -196,52 +196,136 @@ async function processPayment(e) {
     const overlay = document.getElementById('processing-overlay');
     const msg = document.getElementById('processing-msg');
     
-    overlay.classList.remove('hidden');
-    msg.innerHTML = document.getElementById('chk-method').value === 'COD' ? 'Validating Address...' : 'Securely Processing Payment...';
-    
-    // Simulate network delay for Swiggy-like feeling
-    await new Promise(r => setTimeout(r, 2500));
+    const method = document.getElementById('chk-method').value;
+    const totalText = document.getElementById('chk-amount').value;
+    const totalAmt = parseInt(totalText.replace(/[^\d]/g, ''), 10);
     
     const orderData = {
         name: document.getElementById('chk-name').value,
         phone: document.getElementById('chk-phone').value,
         address: document.getElementById('chk-address').value,
-        method: document.getElementById('chk-method').value,
-        total: document.getElementById('chk-amount').value,
+        method: method,
+        total: totalText,
         items: cart,
         type: 'ECOMMERCE_ORDER'
     };
-    
-    try {
-        const res = await fetch('/api/order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderData)
-        });
-        if (res.ok) {
-            msg.innerHTML = '<span style="color:var(--sage)">✅ Payment Successful!</span>';
-            
-            // If this was a custom cake booking, securely forward the actual custom details to the Messages/Inquiries DB!
-            if (window._pendingCustomCake) {
-                await fetch('/api/contact', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(window._pendingCustomCake)
-                });
-                window._pendingCustomCake = null;
-            }
-            
-            await new Promise(r => setTimeout(r, 1500));
-            cart = []; updateCartUI();
-            closeCheckout();
-            showToast('Order confirmed! Check your phone for details.');
-            document.getElementById('payment-form').reset();
-        } else throw new Error();
-    } catch (err) {
-        msg.innerHTML = '<span style="color:red">❌ Error connecting to backend!</span>';
-        await new Promise(r => setTimeout(r, 2000));
+
+    // Helper to finalize order
+    async function finalizeOrder() {
+        overlay.classList.remove('hidden');
+        msg.innerHTML = '<span style="color:var(--sage)">✅ Payment Successful! Saving Order...</span>';
+        try {
+            const res = await fetch('/api/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData)
+            });
+            if (res.ok) {
+                if (window._pendingCustomCake) {
+                    await fetch('/api/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(window._pendingCustomCake)
+                    });
+                    window._pendingCustomCake = null;
+                }
+                
+                await new Promise(r => setTimeout(r, 1000));
+                
+                // WhatsApp Automation for Cart Order
+                let waMsg = `*New Bakery Order*\n`;
+                waMsg += `Name: ${orderData.name}\n`;
+                waMsg += `Phone: ${orderData.phone}\n`;
+                waMsg += `Address: ${orderData.address}\n`;
+                waMsg += `Payment Method: ${orderData.method}\n`;
+                waMsg += `Total: ${orderData.total}\n\n`;
+                waMsg += `*Items:*\n`;
+                cart.forEach(c => { waMsg += `- ${c.qty}x ${c.name} (₹${c.price})\n`; });
+                
+                setTimeout(() => {
+                    window.open(`https://wa.me/919384784409?text=${encodeURIComponent(waMsg)}`, '_blank');
+                }, 500);
+
+                cart = []; updateCartUI();
+                closeCheckout();
+                showToast('Order confirmed! Redirecting to WhatsApp...');
+                document.getElementById('payment-form').reset();
+            } else throw new Error();
+        } catch (err) {
+            msg.innerHTML = '<span style="color:red">❌ Error connecting to backend!</span>';
+            await new Promise(r => setTimeout(r, 2000));
+        }
+        overlay.classList.add('hidden');
     }
-    overlay.classList.add('hidden');
+
+    if (method === 'UPI' || method === 'Card') {
+        overlay.classList.remove('hidden');
+        msg.innerHTML = 'Initializing Razorpay...';
+        try {
+            const res = await fetch('/api/create-razorpay-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: totalAmt * 100 })
+            });
+            const rzpOrder = await res.json();
+            overlay.classList.add('hidden');
+            
+            const options = {
+                "key": "rzp_test_dummykey", // This will be used if the backend mock kicks in, otherwise backend uses real keys
+                "amount": rzpOrder.amount,
+                "currency": "INR",
+                "name": "Destin-Ate Cake Cafe",
+                "description": "Bakery Order",
+                "order_id": rzpOrder.id.startsWith('order_dummy_') ? '' : rzpOrder.id, // Only pass if it's a real Razorpay ID
+                "handler": async function (response) {
+                    if (rzpOrder.id.startsWith('order_dummy_')) {
+                        // Mock payment success
+                        finalizeOrder();
+                    } else {
+                        // Verify real payment
+                        const verifyRes = await fetch('/api/verify-razorpay-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature
+                            })
+                        });
+                        const verifyResult = await verifyRes.json();
+                        if (verifyResult.success) {
+                            finalizeOrder();
+                        } else {
+                            showToast('Payment verification failed!');
+                        }
+                    }
+                },
+                "prefill": {
+                    "name": orderData.name,
+                    "contact": orderData.phone
+                },
+                "theme": { "color": "#4a7c59" }
+            };
+            
+            // If it's a dummy order (no keys), we can just bypass Razorpay UI and pretend it succeeded
+            if (rzpOrder.id.startsWith('order_dummy_')) {
+                showToast('Mock Payment (No keys configured) - Proceeding to order');
+                finalizeOrder();
+            } else {
+                const rzp1 = new window.Razorpay(options);
+                rzp1.open();
+            }
+        } catch (err) {
+            overlay.classList.add('hidden');
+            showToast('Payment initialization failed. Try COD.');
+        }
+    } else {
+        // COD Flow
+        overlay.classList.remove('hidden');
+        msg.innerHTML = 'Validating Address...';
+        await new Promise(r => setTimeout(r, 1500));
+        finalizeOrder();
+    }
 }
 
 // Initialise Empty Cart
