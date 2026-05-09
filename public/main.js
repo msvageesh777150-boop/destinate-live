@@ -398,29 +398,90 @@ async function handleCustomCakeSubmit(e) {
     const form = e.target;
     const formData = new FormData(form);
     const btn = document.getElementById('submitOrderBtn') || form.querySelector('button[type="submit"]');
+    const method = document.getElementById('custom-method').value;
     const originalText = btn.innerText;
     btn.innerText = 'Processing...';
 
-    try {
-        const res = await fetch('/api/order', {
-            method: 'POST',
-            body: formData
-        });
-        const result = await res.json();
-        
-        if (res.ok && result.success) {
-            showToast('Order received! Redirecting to tracking...');
-            setTimeout(() => {
-                window.location.href = '/track/' + result.order._id;
-            }, 1500);
-        } else {
-            showToast('Failed to place order.');
+    async function submitCustomFinal(razorpayOrderId = null, razorpayPaymentId = null) {
+        if (razorpayOrderId) formData.append('razorpayOrderId', razorpayOrderId);
+        if (razorpayPaymentId) formData.append('razorpayPaymentId', razorpayPaymentId);
+        formData.append('method', method === 'COD' ? 'Custom Cake (COD)' : 'Custom Cake (Paid Advance)');
+        formData.append('paymentStatus', method === 'COD' ? 'Pending' : 'Paid');
+        if (method !== 'COD') formData.append('total', '50'); // Rs 50 advance
+
+        try {
+            const res = await fetch('/api/order', { method: 'POST', body: formData });
+            const result = await res.json();
+            if (res.ok && result.success) {
+                showToast('Order received! Redirecting to tracking...');
+                setTimeout(() => window.location.href = '/track/' + result.order._id, 1500);
+            } else {
+                showToast('Failed to place order.');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Error connecting to server.');
+        } finally {
+            btn.innerText = originalText;
         }
-    } catch (err) {
-        console.error(err);
-        showToast('Error connecting to server.');
-    } finally {
-        btn.innerText = originalText;
+    }
+
+    if (method === 'UPI') {
+        try {
+            btn.innerText = 'Initializing Payment...';
+            const res = await fetch('/api/create-razorpay-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: 50 * 100 }) // Rs. 50 Advance
+            });
+            const rzpOrder = await res.json();
+            
+            const options = {
+                "key": rzpOrder.key_id || "rzp_test_dummykey", 
+                "amount": rzpOrder.amount,
+                "currency": "INR",
+                "name": "Destin-Ate Cake Cafe",
+                "description": "Custom Cake Booking Advance",
+                "order_id": rzpOrder.id.startsWith('order_dummy_') ? '' : rzpOrder.id,
+                "handler": async function (response) {
+                    if (rzpOrder.id.startsWith('order_dummy_')) {
+                        submitCustomFinal('mock_order', 'mock_payment');
+                    } else {
+                        const verifyRes = await fetch('/api/verify-razorpay-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature
+                            })
+                        });
+                        const verifyResult = await verifyRes.json();
+                        if (verifyResult.success) {
+                            submitCustomFinal(response.razorpay_order_id, response.razorpay_payment_id);
+                        } else {
+                            showToast('Payment verification failed!');
+                            btn.innerText = originalText;
+                        }
+                    }
+                },
+                "prefill": { "name": formData.get('name'), "contact": formData.get('phone') },
+                "theme": { "color": "#4a5d4e" },
+                "modal": { "ondismiss": function() { btn.innerText = originalText; } }
+            };
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                showToast('Payment failed: ' + response.error.description);
+                btn.innerText = originalText;
+            });
+            rzp.open();
+        } catch (error) {
+            console.error(error);
+            showToast('Failed to initialize Razorpay');
+            btn.innerText = originalText;
+        }
+    } else {
+        submitCustomFinal();
     }
 }
 

@@ -200,6 +200,13 @@
           <input type="file" name="reference_image" accept="image/*" style="background: white;">
         </div>
         <div class="form-group">
+          <label>Payment Method</label>
+          <select name="payment_method" id="custom-method" required>
+            <option value="UPI">Online Payment (Rs. 50 Advance)</option>
+            <option value="COD">Cash on Delivery</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Custom Message & Instructions</label>
           <textarea name="message" placeholder="Message on cake, design ideas..." required></textarea>
         </div>
