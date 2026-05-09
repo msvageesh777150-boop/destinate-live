@@ -218,6 +218,7 @@ async function processPayment(e) {
     
     const orderData = {
         name: document.getElementById('chk-name').value,
+        email: document.getElementById('chk-email').value,
         phone: document.getElementById('chk-phone').value,
         address: document.getElementById('chk-address').value,
         method: method,

@@ -52,7 +52,50 @@ app.set('views', path.join(__dirname, 'views'));
 // Multer for uploads
 const upload = multer({ dest: 'public/uploads/' });
 
-// CallMeBot Notification
+// Email & WhatsApp Notifications
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+async function sendEmailNotification(to, subject, text) {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) return;
+    try {
+        await transporter.sendMail({
+            from: `"Destin-Ate Cake Cafe" <${process.env.EMAIL_USER}>`,
+            to, subject, text
+        });
+        console.log('✅ Email notification sent to', to);
+    } catch(err) {
+        console.error("❌ Email failed:", err.message);
+    }
+}
+
+async function notifyCustomer(order, action) {
+    let subject = "";
+    let text = "";
+    if (action === 'new') {
+        subject = "Order Confirmed - Destin-Ate Cake Cafe";
+        text = `Hi ${order.name},\n\nThank you for your order! Your order has been placed successfully.\nTotal: Rs. ${order.total}\nWe will notify you when it's preparing.\n\nThanks,\nDestin-Ate Cake Cafe`;
+    } else {
+        subject = `Order Update: ${order.status} - Destin-Ate`;
+        text = `Hi ${order.name},\n\nYour order status has been updated to: ${order.status}.\n\nThanks,\nDestin-Ate Cake Cafe`;
+    }
+    
+    // Email Notification
+    if (order.email) {
+        await sendEmailNotification(order.email, subject, text);
+    }
+    
+    // WhatsApp Customer Notification Note
+    // Free CallMeBot only works for the owner's registered number.
+    // Sending to customers requires a paid Twilio or Meta Business API.
+}
+
 async function sendWhatsAppNotification(text) {
     const phone = process.env.CALLMEBOT_PHONE;
     const apikey = process.env.CALLMEBOT_APIKEY;
@@ -165,6 +208,7 @@ app.post('/api/order', upload.single('reference_image'), async (req, res) => {
 
         const newOrder = new Order({
             name: payload.name || 'Customer',
+            email: payload.email || '',
             phone: payload.phone || '',
             address: payload.address || 'N/A',
             method: payload.method || (payload.occasion ? 'Custom Cake' : 'Website'),
@@ -189,7 +233,13 @@ app.post('/api/order', upload.single('reference_image'), async (req, res) => {
         await newOrder.save();
 
         const msg = `*New Order Alert!*\nName: ${newOrder.name}\nPhone: ${newOrder.phone}\nTotal: Rs. ${newOrder.total}\nItems: ${items.map(i=>i.name).join(', ')}`;
-        sendWhatsAppNotification(msg);
+        sendWhatsAppNotification(msg); // To Owner
+        
+        if (process.env.EMAIL_USER) {
+            sendEmailNotification(process.env.EMAIL_USER, "New Order Received!", `You have a new order from ${newOrder.name} for Rs. ${newOrder.total}.`);
+        }
+        
+        notifyCustomer(newOrder, 'new'); // To Customer
 
         res.status(200).json({ success: true, message: 'Order Processed!', order: newOrder });
     } catch(err) {
@@ -237,7 +287,15 @@ app.post('/api/contact', async (req, res) => {
 app.post('/api/admin/order/:id/status', async (req, res) => {
     if (!req.session.isAdmin) return res.status(401).json({ success: false });
     try {
-        await Order.findByIdAndUpdate(req.params.id, { status: req.body.status });
+        const order = await Order.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true });
+        if (order) {
+            notifyCustomer(order, 'update');
+            const ownerMsg = `Order Update: ${order.name}'s order is now ${order.status}.`;
+            sendWhatsAppNotification(ownerMsg);
+            if (process.env.EMAIL_USER) {
+                sendEmailNotification(process.env.EMAIL_USER, "Order Status Updated", ownerMsg);
+            }
+        }
         res.json({ success: true });
     } catch(err) {
         res.status(500).json({ success: false });
