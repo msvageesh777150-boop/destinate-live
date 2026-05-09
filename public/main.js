@@ -1,13 +1,5 @@
-
-
 /* ============================================================
    MENU DATA
-   HOW TO ADD A NEW ITEM:
-   { e: '🎂', n: 'Item Name', d: 'Description here', p: '₹000', c: 'Category' }
-   HOW TO ADD A NEW TAB:
-   1. Add a new key here e.g. "eggless: [ ... ]"
-   2. Add a tab button in HTML: <button class="tab-btn" onclick="showTab('eggless', this)">Eggless</button>
-   3. Add a div in HTML: <div id="tab-eggless" class="tab-content"></div>
 ============================================================ */
 const menuData = {
   cakes: [
@@ -33,7 +25,7 @@ const menuData = {
   bento: [
     { e: '<img src="images/bento_cake_1777734044368.png" style="width:100%;height:100%;object-fit:cover">', n: 'Choco truffle Bento', d: 'Cute little Choco truffle bento cake, customisation available', p: '₹230', w: 'per piece', c: 'Mini' },
     { e: '<img src="images/bento_cake_1777734044368.png" style="width:100%;height:100%;object-fit:cover">', n: 'Black forest Bento', d: 'Cute little Black forest bento cake, customisation available', p: '₹220', w: 'per piece', c: 'Mini' },
-    { e: '<img src="images/bento_cake_1777734044368.png" style="width:100%;height:100%;object-fit:cover">', n: 'White forest Bento', d: 'Cute little White forest bento cake, customisation available', p: '₹240', w: 'per piece', c: 'Mini' }
+    { e: '<img src="images/bento_cake_1777734044368.png" style="width:100%;height:100%;object-fit:cover">', n: 'White forest Bento', d: 'Cute little White forest bento cake, customisation available', p: '₹5', w: 'per piece', c: 'Mini' }
   ]
 };
 
@@ -43,8 +35,8 @@ const menuData = {
 let cart = [];
 const catalog = {};
 let _uid = 0;
+let discountApplied = false;
 
-/* Build and inject menu cards */
 function buildMenu() {
   Object.keys(menuData).forEach(cat => {
     const container = document.getElementById('tab-' + cat);
@@ -75,10 +67,10 @@ buildMenu();
    BESTSELLERS DATA
 ============================================================ */
 const bestsData = [
-  { e: '<img src="images/choco_truffle_cake_1777733985044.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Choco Truffle',    s: 'Dark chocolate truffle & rich ganache',   p: '₹700', w: 'per 1/2 kg', r: '★★★★★', d: 'Our absolute crowd-pleaser. Layers of soft Chocolate sponge filled with dark chocolate truffle and wrapped in a rich ganache.' },
-  { e: '<img src="images/lotus_biscoff_cake_1777734003522.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Lotus Biscoff', s: 'Creamy Lotus Biscoff buttercream',       p: '₹785', w: 'per 1/2 kg', r: '★★★★★', d: 'For the serious biscoff lover. Vanilla sponge layered with creamy Lotus Biscoff buttercream frosting and rich caramelized biscuit flavour.' },
-  { e: '<img src="images/fudgy_brownie_1777733969773.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Fudgy Brownie',      s: 'Rich and fudgy chocolate brownie',   p: '₹260', w: '4 pcs', r: '★★★★☆', d: 'Classic rich and fudgy chocolate brownie, perfect for sharing.' },
-  { e: '<img src="images/mango_cake_1777734028570.png" style="width:100%;height:100%;object-fit:cover;border-radius:4px">', n: 'Mango Cake',     s: 'Fresh Mango cream',          p: '₹590', w: 'per 1/2 kg', r: '★★★★★', d: 'A delicate balance of earthy and sweet. Vanilla sponge layered with Fresh Mango cream and topped with fresh fruit.' }
+  { e: '<img src="images/choco_truffle_cake_1777733985044.png" style="width:100%;height:100%;object-fit:cover;border-radius:16px">', n: 'Choco Truffle',    s: 'Dark chocolate truffle & rich ganache',   p: '₹700', w: 'per 1/2 kg', r: '★★★★★', d: 'Our absolute crowd-pleaser. Layers of soft Chocolate sponge filled with dark chocolate truffle and wrapped in a rich ganache.' },
+  { e: '<img src="images/lotus_biscoff_cake_1777734003522.png" style="width:100%;height:100%;object-fit:cover;border-radius:16px">', n: 'Lotus Biscoff', s: 'Creamy Lotus Biscoff buttercream',       p: '₹785', w: 'per 1/2 kg', r: '★★★★★', d: 'For the serious biscoff lover. Vanilla sponge layered with creamy Lotus Biscoff buttercream frosting and rich caramelized biscuit flavour.' },
+  { e: '<img src="images/fudgy_brownie_1777733969773.png" style="width:100%;height:100%;object-fit:cover;border-radius:16px">', n: 'Fudgy Brownie',      s: 'Rich and fudgy chocolate brownie',   p: '₹260', w: '4 pcs', r: '★★★★☆', d: 'Classic rich and fudgy chocolate brownie, perfect for sharing.' },
+  { e: '<img src="images/mango_cake_1777734028570.png" style="width:100%;height:100%;object-fit:cover;border-radius:16px">', n: 'Mango Cake',     s: 'Fresh Mango cream',          p: '₹590', w: 'per 1/2 kg', r: '★★★★★', d: 'A delicate balance of earthy and sweet. Vanilla sponge layered with Fresh Mango cream and topped with fresh fruit.' }
 ];
 
 let activeBest = 0;
@@ -92,25 +84,27 @@ function renderBests() {
     const numPrice = parseInt(b.p.replace(/[^\d]/g, ''), 10);
     catalog[id] = { id, name: b.n, price: numPrice, img: b.e };
     return `
-    <div class="best-item${i === activeBest ? ' active' : ''}" onclick="selectBest(${i})">
-      <div class="best-rank">0${i + 1}</div>
+    <div class="best-item${i === activeBest ? ' active' : ''}" onclick="selectBest(${i})" style="background:var(--cream); padding:1.5rem; border-radius:16px; display:flex; align-items:center; gap:1.2rem; cursor:pointer; transition:all 0.3s; box-shadow: ${i===activeBest ? '0 10px 30px rgba(139,69,19,0.1)' : '0 4px 10px rgba(0,0,0,0.03)'}; border: ${i===activeBest ? '2px solid var(--sage)' : '2px solid transparent'}">
+      <div class="best-rank" style="font-size:1.5rem; font-weight:700; color: ${i===activeBest ? 'var(--sage)' : 'var(--beige-dark)'}">0${i + 1}</div>
       <div>
-        <div class="best-item-name">${b.n}</div>
-        <div class="best-item-sub">${b.s}</div>
+        <div class="best-item-name" style="font-size:1.1rem; font-weight:600; color:var(--brown)">${b.n}</div>
+        <div class="best-item-sub" style="font-size:0.85rem; color:var(--text-muted)">${b.s}</div>
       </div>
-      <div class="best-price">${b.p} <span style="font-size:0.75rem;color:var(--text-muted);font-weight:300;margin-left:4px">${b.w || ''}</span></div>
+      <div class="best-price" style="margin-left:auto; font-weight:600; color:var(--sage)">${b.p}</div>
     </div>
-  `;}).join('');
+  `;}).join('<div style="height:1rem"></div>');
 
   const b = bestsData[activeBest];
   const activeId = 'best_' + activeBest;
   document.getElementById('bestFeature').innerHTML = `
-    <div class="best-feature-image" style="height: 240px; margin-bottom: 1.2rem; display: block; overflow: hidden; border-radius: 4px;">${b.e}</div>
-    <div class="best-feature-name">${b.n}</div>
-    <div class="stars">${b.r}</div>
-    <div class="best-feature-price">${b.p} <span style="font-size:0.8rem;color:var(--text-muted);font-weight:300">${b.w || ''}</span></div>
-    <div class="best-feature-desc">${b.d}</div>
-    <button class="btn-primary" style="margin-top:1.5rem" onclick="addToCart('${activeId}')">Add to Order</button>
+    <div style="background:var(--cream); padding:2rem; border-radius:16px; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+      <div class="best-feature-image" style="height: 240px; margin-bottom: 1.2rem; display: block; overflow: hidden; border-radius: 12px;">${b.e}</div>
+      <div class="best-feature-name" style="font-size:1.6rem; font-weight:700; color:var(--brown); margin-bottom:0.5rem">${b.n}</div>
+      <div class="stars" style="color: #FFC107; font-size:1.2rem; margin-bottom:0.5rem">${b.r}</div>
+      <div class="best-feature-price" style="font-size:1.3rem; font-weight:600; color:var(--sage); margin-bottom:1rem">${b.p} <span style="font-size:0.8rem;color:var(--text-muted);font-weight:400">${b.w || ''}</span></div>
+      <div class="best-feature-desc" style="color:var(--text-muted); font-size:0.95rem; line-height:1.6">${b.d}</div>
+      <button class="btn-primary" style="margin-top:1.5rem; width:100%" onclick="addToCart('${activeId}')">Add to Order</button>
+    </div>
   `;
 }
 
@@ -143,6 +137,19 @@ function toggleCart() {
     document.getElementById('cart-overlay').classList.toggle('hidden');
 }
 
+function applyCoupon() {
+    const code = document.getElementById('coupon-code').value.trim().toUpperCase();
+    if (code === 'FIRST10') {
+        discountApplied = true;
+        showToast('Coupon applied: 10% OFF!');
+        updateCartUI();
+    } else {
+        discountApplied = false;
+        showToast('Invalid coupon code');
+        updateCartUI();
+    }
+}
+
 function updateCartUI() {
     const itemsCont = document.getElementById('cart-items');
     const badge = document.getElementById('cart-badge');
@@ -150,37 +157,46 @@ function updateCartUI() {
     
     let subtotal = 0, count = 0;
     
-    itemsCont.innerHTML = cart.map(c => {
-        subtotal += (c.price * c.qty);
-        count += c.qty;
-        return `
-        <div class="cart-item-ui">
-            <div class="cart-item-img">${c.img}</div>
-            <div class="cart-item-details">
-                <div class="cart-item-name">${c.name}</div>
-                <div class="cart-item-price">₹${c.price}</div>
-            </div>
-            <div class="cart-item-controls">
-                <button class="cart-btn" onclick="updateQty('${c.id}', -1)">-</button>
-                <span style="font-size:0.9rem;font-weight:600;min-width:14px;text-align:center">${c.qty}</span>
-                <button class="cart-btn" onclick="updateQty('${c.id}', 1)">+</button>
-            </div>
-        </div>`;
-    }).join('');
-    
-    if(count === 0) {
-        fbtn.classList.add('hidden');
-        itemsCont.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:2rem; font-size:1.1rem">Your cart is empty 🛒</div>';
-    } else {
-        fbtn.classList.remove('hidden');
+    if(itemsCont) {
+      itemsCont.innerHTML = cart.map(c => {
+          subtotal += (c.price * c.qty);
+          count += c.qty;
+          return `
+          <div class="cart-item-ui">
+              <div class="cart-item-img" style="width:70px; height:70px; border-radius:8px; overflow:hidden">${c.img}</div>
+              <div class="cart-item-details">
+                  <div class="cart-item-name">${c.name}</div>
+                  <div class="cart-item-price">₹${c.price}</div>
+              </div>
+              <div class="cart-item-controls">
+                  <button class="cart-btn" onclick="updateQty('${c.id}', -1)">-</button>
+                  <span style="font-size:0.95rem;font-weight:600;min-width:20px;text-align:center">${c.qty}</span>
+                  <button class="cart-btn" onclick="updateQty('${c.id}', 1)">+</button>
+              </div>
+          </div>`;
+      }).join('');
+      
+      if(count === 0) {
+          fbtn?.classList.add('hidden');
+          itemsCont.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:3rem; font-size:1.1rem; font-weight:500;">Your cart is empty 🛒</div>';
+          discountApplied = false; // reset discount if empty
+      } else {
+          fbtn?.classList.remove('hidden');
+      }
     }
     
-    badge.innerText = count;
-    document.getElementById('cart-subtotal').innerText = '₹' + subtotal;
-    const delivery = count > 0 ? 40 : 0;
-    document.getElementById('cart-delivery').innerText = '₹' + delivery;
-    document.getElementById('cart-total').innerText = '₹' + (subtotal + delivery);
-    document.getElementById('chk-amount').value = '₹' + (subtotal + delivery);
+    if(badge) badge.innerText = count;
+    
+    let discount = discountApplied ? Math.round(subtotal * 0.10) : 0;
+    const delivery = 0;
+    const total = subtotal - discount + delivery;
+    
+    if(document.getElementById('cart-subtotal')) document.getElementById('cart-subtotal').innerText = '₹' + subtotal;
+    if(document.getElementById('cart-delivery')) document.getElementById('cart-delivery').innerText = '₹' + delivery;
+    if(document.getElementById('cart-discount')) document.getElementById('cart-discount').innerText = '-₹' + discount;
+    if(document.getElementById('discount-row')) document.getElementById('discount-row').style.display = discountApplied ? 'flex' : 'none';
+    if(document.getElementById('cart-total')) document.getElementById('cart-total').innerText = '₹' + total;
+    if(document.getElementById('chk-amount')) document.getElementById('chk-amount').value = '₹' + total;
 }
 
 function openCheckout() {
@@ -206,12 +222,15 @@ async function processPayment(e) {
         address: document.getElementById('chk-address').value,
         method: method,
         total: totalText,
-        items: cart,
-        type: 'ECOMMERCE_ORDER'
+        items: JSON.stringify(cart),
+        paymentStatus: method === 'COD' ? 'Pending' : 'Paid'
     };
 
     // Helper to finalize order
-    async function finalizeOrder() {
+    async function finalizeOrder(razorpayOrderId = null, razorpayPaymentId = null) {
+        if(razorpayOrderId) orderData.razorpayOrderId = razorpayOrderId;
+        if(razorpayPaymentId) orderData.razorpayPaymentId = razorpayPaymentId;
+        
         overlay.classList.remove('hidden');
         msg.innerHTML = '<span style="color:var(--sage)">✅ Payment Successful! Saving Order...</span>';
         try {
@@ -220,36 +239,16 @@ async function processPayment(e) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData)
             });
+            const result = await res.json();
             if (res.ok) {
-                if (window._pendingCustomCake) {
-                    await fetch('/api/contact', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(window._pendingCustomCake)
-                    });
-                    window._pendingCustomCake = null;
-                }
-                
-                await new Promise(r => setTimeout(r, 1000));
-                
-                // WhatsApp Automation for Cart Order
-                let waMsg = `*New Bakery Order*\n`;
-                waMsg += `Name: ${orderData.name}\n`;
-                waMsg += `Phone: ${orderData.phone}\n`;
-                waMsg += `Address: ${orderData.address}\n`;
-                waMsg += `Payment Method: ${orderData.method}\n`;
-                waMsg += `Total: ${orderData.total}\n\n`;
-                waMsg += `*Items:*\n`;
-                cart.forEach(c => { waMsg += `- ${c.qty}x ${c.name} (₹${c.price})\n`; });
-                
-                setTimeout(() => {
-                    window.open(`https://wa.me/919384784409?text=${encodeURIComponent(waMsg)}`, '_blank');
-                }, 500);
-
                 cart = []; updateCartUI();
                 closeCheckout();
-                showToast('Order confirmed! Redirecting to WhatsApp...');
+                showToast('Order confirmed! Redirecting to tracking...');
                 document.getElementById('payment-form').reset();
+                
+                setTimeout(() => {
+                    window.location.href = '/track/' + result.order._id;
+                }, 1500);
             } else throw new Error();
         } catch (err) {
             msg.innerHTML = '<span style="color:red">❌ Error connecting to backend!</span>';
@@ -271,18 +270,16 @@ async function processPayment(e) {
             overlay.classList.add('hidden');
             
             const options = {
-                "key": "rzp_test_dummykey", // This will be used if the backend mock kicks in, otherwise backend uses real keys
+                "key": rzpOrder.key_id || "rzp_test_dummykey", 
                 "amount": rzpOrder.amount,
                 "currency": "INR",
                 "name": "Destin-Ate Cake Cafe",
                 "description": "Bakery Order",
-                "order_id": rzpOrder.id.startsWith('order_dummy_') ? '' : rzpOrder.id, // Only pass if it's a real Razorpay ID
+                "order_id": rzpOrder.id.startsWith('order_dummy_') ? '' : rzpOrder.id,
                 "handler": async function (response) {
                     if (rzpOrder.id.startsWith('order_dummy_')) {
-                        // Mock payment success
-                        finalizeOrder();
+                        finalizeOrder('mock_order', 'mock_payment');
                     } else {
-                        // Verify real payment
                         const verifyRes = await fetch('/api/verify-razorpay-payment', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -294,23 +291,19 @@ async function processPayment(e) {
                         });
                         const verifyResult = await verifyRes.json();
                         if (verifyResult.success) {
-                            finalizeOrder();
+                            finalizeOrder(response.razorpay_order_id, response.razorpay_payment_id);
                         } else {
                             showToast('Payment verification failed!');
                         }
                     }
                 },
-                "prefill": {
-                    "name": orderData.name,
-                    "contact": orderData.phone
-                },
-                "theme": { "color": "#4a7c59" }
+                "prefill": { "name": orderData.name, "contact": orderData.phone },
+                "theme": { "color": "#8B4513" }
             };
             
-            // If it's a dummy order (no keys), we can just bypass Razorpay UI and pretend it succeeded
             if (rzpOrder.id.startsWith('order_dummy_')) {
-                showToast('Mock Payment (No keys configured) - Proceeding to order');
-                finalizeOrder();
+                showToast('Mock Payment (No keys configured) - Proceeding');
+                finalizeOrder('mock_order', 'mock_payment');
             } else {
                 const rzp1 = new window.Razorpay(options);
                 rzp1.open();
@@ -320,7 +313,6 @@ async function processPayment(e) {
             showToast('Payment initialization failed. Try COD.');
         }
     } else {
-        // COD Flow
         overlay.classList.remove('hidden');
         msg.innerHTML = 'Validating Address...';
         await new Promise(r => setTimeout(r, 1500));
@@ -328,10 +320,9 @@ async function processPayment(e) {
     }
 }
 
-// Initialise Empty Cart
 updateCartUI();
 
-/* Form submission handler (Generic Contact) */
+/* Form submission handler */
 async function handleFormSubmit(event, endpoint, successMessage) {
   event.preventDefault();
   const form = event.target;
@@ -352,7 +343,7 @@ async function handleFormSubmit(event, endpoint, successMessage) {
 }
 
 /* ============================================================
-   REVIEWS & SUPABASE INTEGRATION
+   REVIEWS INTEGRATION
 ============================================================ */
 async function fetchReviews() {
     try {
@@ -362,12 +353,12 @@ async function fetchReviews() {
         if (!reviewsContainer || !data.reviews) return;
         
         reviewsContainer.innerHTML = data.reviews.length ? data.reviews.map(r => `
-            <div class="review-card" style="background: white; padding: 1.5rem; border-radius: 4px; border: 1px solid var(--beige-dark); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                <div class="stars" style="color: #c9a84c; margin-bottom: 0.5rem; font-size: 1.2rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
-                <p style="font-size: 0.9rem; color: var(--text-muted); font-style: italic; margin-bottom: 1rem;">"${r.message}"</p>
-                <div style="font-family: 'Playfair Display', serif; color: var(--brown); font-weight: bold;">- ${r.name}</div>
+            <div style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                <div class="stars" style="color: #FFC107; margin-bottom: 1rem; font-size: 1.2rem;">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+                <p style="font-size: 0.95rem; color: var(--text); font-style: italic; margin-bottom: 1.5rem; line-height: 1.6;">"${r.message}"</p>
+                <div style="font-family: 'Playfair Display', serif; color: var(--brown); font-weight: 600;">- ${r.name}</div>
             </div>
-        `).join('') : '<p style="text-align:center; color: var(--text-muted);">No reviews yet. Be the first!</p>';
+        `).join('') : '<p style="text-align:center; color: var(--text-muted); width: 100%;">No reviews yet. Be the first!</p>';
     } catch (e) {
         console.error(e);
     }
@@ -392,7 +383,7 @@ async function handleReviewSubmit(e) {
             e.target.reset();
             fetchReviews();
         } else {
-            showToast('Failed to submit review. Database might not be configured.');
+            showToast('Failed to submit review.');
         }
     } catch (err) {
         showToast('Error connecting to server.');
@@ -401,7 +392,7 @@ async function handleReviewSubmit(e) {
     }
 }
 
-/* Custom Cake WhatsApp Order Flow */
+/* Custom Cake Order Flow */
 async function handleCustomCakeSubmit(e) {
     e.preventDefault();
     const form = e.target;
@@ -418,26 +409,12 @@ async function handleCustomCakeSubmit(e) {
         const result = await res.json();
         
         if (res.ok && result.success) {
-            showToast('Order received! Redirecting to WhatsApp...');
-            
-            const payload = Object.fromEntries(formData.entries());
-            let msg = `*New Custom Cake Order*\n`;
-            msg += `Name: ${payload.name}\n`;
-            msg += `Phone: ${payload.phone}\n`;
-            msg += `Occasion: ${payload.occasion}\n`;
-            msg += `Flavour: ${payload.flavour}\n`;
-            msg += `Weight: ${payload.weight}\n`;
-            if (payload.eggless) msg += `Type: Eggless\n`;
-            msg += `Date: ${payload.delivery_date} at ${payload.delivery_time}\n`;
-            if (payload.urgent) msg += `*URGENT ORDER*\n`;
-            msg += `Instructions: ${payload.message}\n`;
-            
+            showToast('Order received! Redirecting to tracking...');
             setTimeout(() => {
-                window.open(`https://wa.me/919384784409?text=${encodeURIComponent(msg)}`, '_blank');
-                form.reset();
-            }, 1000);
+                window.location.href = '/track/' + result.order._id;
+            }, 1500);
         } else {
-            showToast('Failed to place order. Check Database connection.');
+            showToast('Failed to place order.');
         }
     } catch (err) {
         console.error(err);
@@ -458,19 +435,14 @@ function showTab(tab, btn) {
 /* Toast notification */
 function showToast(msg) {
   const t = document.getElementById('toast');
+  if(!t) return;
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* Order option selector */
-function selectOrder(el) {
-  document.querySelectorAll('.order-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
 /* Smooth scroll helper */
 function smoothScroll(id) {
-  document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  const el = document.querySelector(id);
+  if(el) el.scrollIntoView({ behavior: 'smooth' });
 }
-

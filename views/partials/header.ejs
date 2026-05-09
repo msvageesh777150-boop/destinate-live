@@ -13,7 +13,7 @@
 
   <!-- TOP PROMO -->
   <div class="promo-bar">
-    FREE DELIVERY ON ORDERS OVER ₹1000 | 100% EGGLESS AVAILABLE
+    Use Code <strong>FIRST10</strong> for 10% OFF your first order! | 100% EGGLESS AVAILABLE
   </div>
 
   <!-- NAV -->
@@ -21,17 +21,16 @@
     <div class="nav-inner">
       <div class="logo">Destin-ate</div>
       <div class="nav-links">
-        <a href="#home" onclick="event.preventDefault(); smoothScroll('#home')">HOME</a>
-        <a href="#menu" onclick="event.preventDefault(); smoothScroll('#menu')">MENU</a>
-        <a href="#bestsellers" onclick="event.preventDefault(); smoothScroll('#bestsellers')">BESTSELLERS</a>
-        <a href="#gallery" onclick="event.preventDefault(); smoothScroll('#gallery')">GALLERY</a>
-        <a href="#about" onclick="event.preventDefault(); smoothScroll('#about')">ABOUT</a>
-        <a href="#contact" onclick="event.preventDefault(); smoothScroll('#contact')">CONTACT</a>
+        <a href="/#home" onclick="if(window.location.pathname==='/'){event.preventDefault(); smoothScroll('#home')}">HOME</a>
+        <a href="/#menu" onclick="if(window.location.pathname==='/'){event.preventDefault(); smoothScroll('#menu')}">MENU</a>
+        <a href="/#bestsellers" onclick="if(window.location.pathname==='/'){event.preventDefault(); smoothScroll('#bestsellers')}">BESTSELLERS</a>
+        <a href="/#about" onclick="if(window.location.pathname==='/'){event.preventDefault(); smoothScroll('#about')}">ABOUT</a>
+        <a href="/#contact" onclick="if(window.location.pathname==='/'){event.preventDefault(); smoothScroll('#contact')}">CONTACT</a>
       </div>
     </div>
   </nav>
 
-  <!-- CART UI INJECTED IN LAYOUT (so it's on every page!) -->
+  <!-- CART UI -->
   <div id="cart-float" class="cart-float hidden" onclick="toggleCart()">
     <span class="cart-icon">🛒</span>
     <span class="cart-badge" id="cart-badge">0</span>
@@ -45,8 +44,13 @@
     </div>
     <div class="cart-items" id="cart-items"></div>
     <div class="cart-footer">
+      <div class="cart-row">
+        <input type="text" id="coupon-code" placeholder="Coupon Code (e.g. FIRST10)" style="padding: 8px; border: 1px solid var(--beige-dark); border-radius: 4px; width: 60%; font-family: 'Jost', sans-serif;">
+        <button onclick="applyCoupon()" class="btn-outline" style="padding: 8px 12px;">Apply</button>
+      </div>
       <div class="cart-row"><span>Subtotal</span><span id="cart-subtotal">₹0</span></div>
       <div class="cart-row"><span>Delivery Fee</span><span id="cart-delivery">₹40</span></div>
+      <div class="cart-row" id="discount-row" style="display:none; color: var(--accent);"><span>Discount</span><span id="cart-discount">-₹0</span></div>
       <div class="cart-row total"><span>Total</span><span id="cart-total">₹0</span></div>
       <button class="btn-primary" style="width: 100%; margin-top: 1rem; padding: 16px" onclick="openCheckout()">Proceed to Checkout</button>
     </div>
